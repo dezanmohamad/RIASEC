@@ -494,16 +494,35 @@
         async function saveToFirebase(resultData) {
             const statusEl = document.getElementById('saveStatus');
             statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-blue-50 text-blue-700";
-            statusEl.innerText = "Menghubungkan ke database...";
+            statusEl.innerText = "Menghubungkan ke database Firebase...";
+            
             try {
-                const user = await getAuthUser();
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'riasec-smkalwafa';
+                // 1. Memastikan Auth selesai dengan timeout (Mencegah Hanging)
+                const authPromise = getAuthUser();
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout: Firebase Auth tidak merespons (Cek koneksi internet atau Domain Netlify di Authorized Domains)")), 7000));
+                
+                const user = await Promise.race([authPromise, timeoutPromise]);
+                statusEl.innerText = "Sesi aman. Menyimpan data...";
+
+                // 2. Tentukan ID Aplikasi (Sangat penting agar data tidak nyasar)
+                const appId = 'riasec-smkalwafa'; // HARDCODED agar pasti
+                
+                // 3. Proses Menyimpan ke Firestore
                 const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'hasil_tes');
-                await addDoc(resultsRef, { ...resultData, waktuTes: serverTimestamp(), userId: user.uid });
+                await addDoc(resultsRef, { 
+                    ...resultData, 
+                    waktuTes: serverTimestamp(), 
+                    userId: user.uid 
+                });
+                
+                // 4. Sukses
                 statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-emerald-50 text-emerald-700";
                 statusEl.innerHTML = `✅ <strong>Berhasil Disimpan!</strong> Hasil tes terekam di sistem Guru BK.`;
+                console.log("Firebase Save Success!");
+                
             } catch (err) {
-                console.error("Firebase Save Error:", err);
+                // 5. Tangkap Error Brutal (Sekarang tidak akan hang lagi!)
+                console.error("Firebase Save Error TERDETEKSI:", err);
                 statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-rose-50 text-rose-700";
                 statusEl.innerHTML = `⚠️ <strong>Gagal menyimpan!</strong><br><span class="text-xs text-rose-500">Detail: ${err.message}</span>`;
             }
@@ -729,9 +748,13 @@
             const tbody = document.getElementById('tableBody');
             syncLabel.innerText = "Mengamankan Sesi...";
             try {
-                const user = await getAuthUser();
+                // Tambahkan timeout yang sama untuk Dashboard Guru
+                const authPromise = getAuthUser();
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout: Gagal memverifikasi admin.")), 7000));
+                const user = await Promise.race([authPromise, timeoutPromise]);
+                
                 syncLabel.innerText = "Sinkronisasi Aktif";
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'riasec-smkalwafa';
+                const appId = 'riasec-smkalwafa'; // HARDCODED agar pasti
                 const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'hasil_tes');
 
                 onSnapshot(resultsRef, (snapshot) => {
