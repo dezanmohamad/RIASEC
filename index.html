@@ -66,7 +66,7 @@
                 
                 <div class="pt-4 text-center">
                     <button type="button" onclick="startTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-10 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 w-full sm:w-auto">
-                        Simpan & Mulai Tes 🚀
+                        Simpan Data 🚀
                     </button>
                 </div>
             </form>
@@ -84,16 +84,23 @@
             </div>
         </div>
 
+        <!-- Sesi 1.5: Layar Persiapan Sebelum Mulai -->
+        <div id="stepPrep" class="hidden fade-in bg-white p-8 sm:p-12 rounded-2xl shadow-md border border-slate-200 text-center max-w-2xl mx-auto mt-4">
+            <div class="inline-flex bg-indigo-100 text-indigo-600 w-20 h-20 rounded-full items-center justify-center text-4xl mb-6 mx-auto animate-bounce shadow-inner">
+                💬
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-3">Halo, <span id="displayName" class="text-indigo-600">Siswa</span>!</h2>
+            <p class="text-slate-600 mb-8 text-base sm:text-lg leading-relaxed">
+                Jawablah menggunakan insting pertama Anda. Jangan terlalu lama berpikir.<br><br>
+                Anda hanya memiliki waktu <strong class="text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-100">5 Detik</strong> untuk setiap pertanyaan. Bersiaplah!
+            </p>
+            <button type="button" onclick="beginQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 active:scale-95 text-lg w-full sm:w-auto">
+                Saya Siap, Mulai Tes Sekarang! 🔥
+            </button>
+        </div>
+
         <!-- Sesi 2: Kuis Berwaktu -->
         <div id="step2" class="hidden fade-in space-y-4">
-            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex items-center gap-3">
-                <div class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 animate-bounce">💬</div>
-                <p class="text-indigo-900 text-sm">
-                    Halo, <strong id="displayName" class="text-indigo-700">Siswa</strong>! Jawablah menggunakan insting pertama Anda. 
-                    Anda memiliki <strong class="text-rose-600">5 Detik</strong> untuk setiap pertanyaan.
-                </p>
-            </div>
-
             <div id="quizCard" class="bg-white p-6 sm:p-10 rounded-2xl shadow-md border border-slate-200 text-center relative overflow-hidden">
                 <div class="flex justify-between items-center mb-4">
                     <span id="qProgress" class="text-sm font-semibold text-slate-500">Pertanyaan 1 / 42</span>
@@ -369,6 +376,7 @@
             document.getElementById('resultContent').classList.add('hidden');
             document.getElementById('detailAnalysisBox').classList.add('hidden');
             document.getElementById('step2').classList.add('hidden');
+            document.getElementById('stepPrep').classList.add('hidden'); // Sembunyikan layar persiapan
             document.getElementById('step1').classList.remove('hidden');
             document.getElementById('saveStatus').className = "mb-6 p-4 rounded-xl text-center text-sm font-medium border";
             document.getElementById('saveStatus').innerText = "Menyimpan hasil ke database...";
@@ -384,9 +392,19 @@
             }
             document.getElementById('personalDataError').classList.add('hidden');
             document.getElementById('displayName').innerText = userName;
+            
+            // Pindah ke Layar Persiapan Dulu, JANGAN langsung mulai timer
             document.getElementById('step1').classList.add('hidden');
+            document.getElementById('stepPrep').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Fungsi Baru: Tombol "Saya Siap" ditekan
+        window.beginQuiz = function() {
+            document.getElementById('stepPrep').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            
             initQuestions();
             showQuestion(0);
         };
@@ -504,8 +522,8 @@
                 const user = await Promise.race([authPromise, timeoutPromise]);
                 statusEl.innerText = "Sesi aman. Menyimpan data...";
 
-                // 2. Tentukan ID Aplikasi (Sangat penting agar data tidak nyasar)
-                const appId = 'riasec-smkalwafa'; // HARDCODED agar pasti
+                // 2. Tentukan ID Aplikasi secara Dinamis (Mencegah Error Permissions di Canvas vs Netlify)
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'riasec-smkalwafa';
                 
                 // 3. Proses Menyimpan ke Firestore
                 const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'hasil_tes');
@@ -754,7 +772,10 @@
                 const user = await Promise.race([authPromise, timeoutPromise]);
                 
                 syncLabel.innerText = "Sinkronisasi Aktif";
-                const appId = 'riasec-smkalwafa'; // HARDCODED agar pasti
+                
+                // Tentukan ID Aplikasi secara Dinamis (Mencegah Error Permissions di Canvas vs Netlify)
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'riasec-smkalwafa';
+                
                 const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'hasil_tes');
 
                 onSnapshot(resultsRef, (snapshot) => {
