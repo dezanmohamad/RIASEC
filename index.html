@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Tes RIASEC Premium & Portal Guru BK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen py-6 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-950 tracking-tight">Portal Tes Minat Karir RIASEC</h1>
+            <p class="text-slate-500 mt-2 text-sm sm:text-base">Kenali potensi karir Anda berdasarkan teori kepribadian Holland (RIASEC)</p>
+        </header>
+
+        <!-- Sesi 1: Registrasi Siswa -->
+        <div id="step1" class="fade-in bg-white p-6 sm:p-8 rounded-2xl shadow-md border border-slate-200">
+            <div class="text-center mb-6 border-b border-slate-100 pb-4">
+                <h2 class="text-2xl font-bold text-slate-800">Selamat Datang Siswa!</h2>
+                <p class="text-slate-500 mt-1 text-sm">Silakan lengkapi data diri Anda sebelum memulai tes psikologi ini.</p>
+            </div>
+
+            <form id="studentRegForm" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="userName" class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
+                        <input type="text" id="userName" name="userName" placeholder="Masukkan nama lengkap Anda" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label for="userClass" class="block text-sm font-medium text-slate-700 mb-1">Kelas / Jurusan</label>
+                        <select id="userClass" name="userClass" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white cursor-pointer">
+                            <option value="" disabled selected>Pilih Kelas Anda</option>
+                            <optgroup label="Kelas X">
+                                <option value="X Teknologi Farmasi">X Teknologi Farmasi</option>
+                                <option value="X Broadcasting dan Perfilman">X Broadcasting dan Perfilman</option>
+                                <option value="X Usaha Layanan Pariwisata">X Usaha Layanan Pariwisata</option>
+                            </optgroup>
+                            <optgroup label="Kelas XI">
+                                <option value="XI Teknologi Farmasi">XI Teknologi Farmasi</option>
+                                <option value="XI Broadcasting dan Perfilman">XI Broadcasting dan Perfilman</option>
+                                <option value="XI Usaha Layanan Pariwisata">XI Usaha Layanan Pariwisata</option>
+                            </optgroup>
+                            <optgroup label="Kelas XII">
+                                <option value="XII Teknologi Farmasi">XII Teknologi Farmasi</option>
+                                <option value="XII Broadcasting dan Perfilman">XII Broadcasting dan Perfilman</option>
+                                <option value="XII Usaha Layanan Pariwisata">XII Usaha Layanan Pariwisata</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="personalDataError" class="hidden mt-2 text-sm text-red-500 font-semibold text-center">
+                    ⚠️ Mohon isi Nama Lengkap dan pilih Kelas Anda terlebih dahulu!
+                </div>
+                
+                <div class="pt-4 text-center">
+                    <button type="button" onclick="startTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-10 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 w-full sm:w-auto">
+                        Simpan & Mulai Tes 🚀
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center justify-between gap-4">
+                <div class="text-center">
+                    <p class="text-xs text-slate-400">Dikembangkan Oleh :</p>
+                    <p class="text-sm text-slate-700 font-semibold mt-1">Mohamad Dezan Hadiansyah, S.H., Gr. dan Syifa Nadiah, S.Pd., Gr.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Guru SMK AL-WAFA</p>
+                </div>
+                <button onclick="showAdminLogin()" class="flex items-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    Masuk Sebagai Portal Guru BK
+                </button>
+            </div>
+        </div>
+
+        <!-- Sesi 2: Kuis Berwaktu -->
+        <div id="step2" class="hidden fade-in space-y-4">
+            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex items-center gap-3">
+                <div class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 animate-bounce">💬</div>
+                <p class="text-indigo-900 text-sm">
+                    Halo, <strong id="displayName" class="text-indigo-700">Siswa</strong>! Jawablah menggunakan insting pertama Anda. 
+                    Anda memiliki <strong class="text-rose-600">5 Detik</strong> untuk setiap pertanyaan.
+                </p>
+            </div>
+
+            <div id="quizCard" class="bg-white p-6 sm:p-10 rounded-2xl shadow-md border border-slate-200 text-center relative overflow-hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <span id="qProgress" class="text-sm font-semibold text-slate-500">Pertanyaan 1 / 42</span>
+                    <div class="flex items-center gap-1.5 text-rose-500 font-bold bg-rose-50 px-3 py-1 rounded-full border border-rose-100">
+                        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span id="timerText">5</span>s
+                    </div>
+                </div>
+                
+                <div class="w-full bg-slate-100 rounded-full h-2 mb-8">
+                    <div id="timerBar" class="bg-rose-500 h-2 rounded-full transition-all" style="width: 100%"></div>
+                </div>
+                
+                <div class="inline-flex items-center gap-2 mb-4 bg-slate-50 px-4 py-1.5 rounded-full border border-slate-100">
+                    <span id="qCategoryBadge" class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"></span>
+                    <span id="qCategoryTitle" class="text-sm font-bold text-slate-600"></span>
+                </div>
+                
+                <h3 id="qText" class="text-xl sm:text-2xl font-bold text-slate-800 mb-10 min-h-[5rem] flex items-center justify-center leading-relaxed">
+                    <!-- Teks Pertanyaan -->
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                    <button type="button" onclick="handleAnswer(1)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl text-lg shadow-md hover:shadow-lg transition-all transform active:scale-95">YA</button>
+                    <button type="button" onclick="handleAnswer(0)" class="bg-slate-500 hover:bg-slate-600 text-white font-bold py-4 rounded-xl text-lg shadow-md hover:shadow-lg transition-all transform active:scale-95">TIDAK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sesi 3: Lembar Hasil Tes -->
+        <div id="resultContent" class="hidden fade-in mt-4 bg-white p-6 sm:p-8 rounded-2xl shadow-md border border-slate-200">
+            <div class="text-center mb-6 border-b border-slate-100 pb-4">
+                <p class="text-slate-500 text-sm">Hasil Tes Psikometri untuk:</p>
+                <p id="resultIdentity" class="text-xl font-bold text-slate-800 mt-1"></p>
+            </div>
+
+            <div id="saveStatus" class="mb-6 p-4 rounded-xl text-center text-sm font-medium border">
+                Menyimpan hasil ke database...
+            </div>
+
+            <div class="bg-indigo-50 border-l-4 border-indigo-500 p-5 rounded-r-2xl mb-6">
+                <p id="highestScoreText" class="text-indigo-950 font-bold text-xl mb-2"></p>
+                <p id="highestDescText" class="text-slate-700 text-sm sm:text-base leading-relaxed"></p>
+            </div>
+
+            <!-- Tambahan Detail Karakter & Karir -->
+            <div id="detailAnalysisBox" class="hidden mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-blue-50 border border-blue-100 p-5 rounded-xl">
+                    <h4 class="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Karakteristik Utama
+                    </h4>
+                    <ul id="traitList" class="list-disc list-outside ml-4 text-sm text-blue-800 space-y-1.5 leading-relaxed"></ul>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-100 p-5 rounded-xl">
+                    <h4 class="font-bold text-emerald-900 mb-3 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Rekomendasi Profesi
+                    </h4>
+                    <ul id="careerList" class="list-disc list-outside ml-4 text-sm text-emerald-800 space-y-1.5 leading-relaxed"></ul>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Tabel Rincian Skor Anda (RIASEC)
+                </h3>
+                <div class="overflow-hidden rounded-xl border border-slate-200">
+                    <table class="min-w-full text-sm text-left text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                            <tr>
+                                <th scope="col" class="px-5 py-3">Kategori (RIASEC)</th>
+                                <th scope="col" class="px-5 py-3 text-center w-36">Total Skor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreTableBody" class="divide-y divide-slate-100 bg-white">
+                            <!-- Di-generate otomatis -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Kesimpulan & Rekomendasi Karir
+                </h3>
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-slate-700 text-sm sm:text-base leading-relaxed" id="conclusionText">
+                </div>
+            </div>
+
+            <div class="text-center pt-4 flex flex-col sm:flex-row justify-center gap-3">
+                <button type="button" onclick="resetTest()" class="bg-slate-600 text-white hover:bg-slate-700 font-semibold py-2.5 px-6 rounded-xl transition-colors shadow-sm">
+                    Ulangi Tes
+                </button>
+                <button type="button" onclick="downloadCurrentStudentPDF()" class="bg-indigo-600 text-white hover:bg-indigo-700 font-semibold py-2.5 px-6 rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Unduh PDF Laporan 📄
+                </button>
+            </div>
+        </div>
+
+        <!-- Sesi 4 & 5: Login & Dashboard Guru BK -->
+        <div id="loginScreen" class="hidden fade-in max-w-md mx-auto bg-white p-8 rounded-2xl shadow-md border border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Portal Log In Guru BK</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="adminPass" class="block text-sm font-medium text-slate-700 mb-1">Password Admin</label>
+                    <input type="password" id="adminPass" placeholder="Masukkan Password Admin" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                </div>
+                <button onclick="checkAdminAuth()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all shadow-md">
+                    Verifikasi Password
+                </button>
+                <button onclick="returnToStudent()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl transition-all text-sm">
+                    Kembali Ke Menu Siswa
+                </button>
+            </div>
+            <p id="adminErrorMsg" class="text-rose-500 text-sm font-semibold text-center mt-4 hidden">⚠️ Password salah! Hubungi Developer jika lupa.</p>
+        </div>
+
+        <div id="dashboardScreen" class="hidden fade-in space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center bg-white p-4 sm:px-6 rounded-2xl shadow-sm border border-slate-200 gap-4">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-800">Dashboard Hasil Tes Siswa</h1>
+                    <p class="text-sm text-slate-400">Guru BK SMK AL-WAFA</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="logoutAdmin()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 text-sm font-semibold px-4 py-2 rounded-xl transition-all border border-rose-100">
+                        Keluar Log In
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Hasil Masuk</p>
+                        <p id="totalSiswa" class="text-3xl font-extrabold text-indigo-600 mt-1">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Export Excel</p>
+                        <p class="text-sm text-slate-500 mt-1">Gunakan untuk laporan offline</p>
+                    </div>
+                    <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl transition-all shadow-sm flex items-center gap-2 text-sm">
+                        Download CSV
+                    </button>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Status Sinkronisasi</p>
+                        <div class="flex items-center gap-1.5 mt-1 text-emerald-600 font-semibold text-sm">
+                            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                            <span id="syncStatusLabel">Menghubungkan...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row gap-3 justify-between items-center">
+                    <h3 class="font-bold text-slate-700">Daftar Hasil Tes Real-Time</h3>
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nama atau kelas..." class="w-full sm:max-w-xs px-4 py-2 border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600" id="resultTable">
+                        <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4">Nama Siswa</th>
+                                <th class="px-6 py-4">Kelas</th>
+                                <th class="px-6 py-4">Tipe Dominan</th>
+                                <th class="px-6 py-4">Kode Holland</th>
+                                <th class="px-6 py-4">Waktu Penyelesaian</th>
+                                <th class="px-6 py-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-100 bg-white">
+                            <tr>
+                                <td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">Membuka data hasil dari Firebase...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // HARAP PASTIKAN KONFIGURASI INI ADALAH MILIK FIREBASE ANDA SENDIRI
+        let firebaseConfig = {
+            apiKey: "AIzaSyB5pKEknOV9dIDwWiDg891MRUmrahwkdW8",
+            authDomain: "riasec-975d6.firebaseapp.com",
+            projectId: "riasec-975d6",
+            storageBucket: "riasec-975d6.firebasestorage.app",
+            messagingSenderId: "827760323443",
+            appId: "1:827760323443:web:7c5845ac6903832107f306"
+        };
+
+        if (typeof __firebase_config !== 'undefined') {
+            try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) { console.error("Failed to parse config:", e); }
+        }
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let allQuestions = [];
+        let currentQuestionIndex = 0;
+        let timerInterval;
+        let timeLeft = 5;
+        const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+        let allAdminData = []; 
+        let cachedUser = null;
+
+        async function getAuthUser() {
+            if (cachedUser && auth.currentUser) return cachedUser;
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const result = await signInWithCustomToken(auth, __initial_auth_token);
+                    cachedUser = result.user;
+                    return cachedUser;
+                }
+            } catch (err) {}
+            try {
+                const result = await signInAnonymously(auth);
+                cachedUser = result.user;
+                return cachedUser;
+            } catch (err) { throw err; }
+        }
+        getAuthUser().catch(err => console.error("Initial auth error:", err));
+
+        const categoryData = {
+            R: { name: "Realistic (Praktis & Fisik)", desc: "Anda sangat berorientasi pada tindakan fisik, peralatan, mesin, atau alam. Anda menyukai pekerjaan yang nyata, praktis, dan dapat diukur. Biasanya Anda lebih suka bekerja dengan objek, alat, mesin, dan alam terbuka daripada bergelut dengan ide abstrak atau interaksi sosial yang intens.", traits: ["Lugas, praktis, dan mekanis", "Menyukai aktivitas luar ruangan (outdoor)", "Terampil menggunakan tangan dan peralatan (hands-on)", "Menyukai solusi yang konkret dari masalah"], careers: ["Ahli Teknik (Mekanik, Sipil, Otomotif)", "Arsitek / Drafter", "Ahli Pertanian / Kehutanan", "Koki / Tata Boga", "Pilot / Logistik", "Teknisi Jaringan / Hardware"] },
+            I: { name: "Investigative (Analitis & Sains)", desc: "Anda sangat analitis, intelektual, dan observasional. Anda memiliki rasa ingin tahu yang tinggi dan suka memecahkan masalah yang kompleks. Anda lebih suka bekerja dengan ide, teori, dan fakta melalui penelitian ilmiah atau akademis.", traits: ["Analitis, rasional, dan logis", "Menyukai penelitian dan bereksperimen", "Senang memecahkan teka-teki intelektual", "Bekerja mandiri dengan tingkat fokus tinggi"], careers: ["Ilmuwan / Peneliti", "Ahli Farmasi / Tenaga Medis", "Programmer / Data Scientist", "Psikolog Klinis", "Analis Sistem & Keuangan", "Dosen / Akademisi"] },
+            A: { name: "Artistic (Kreatif & Seni)", desc: "Anda sangat imajinatif, orisinal, dan intuitif. Anda memiliki kebutuhan tinggi untuk berekspresi secara kreatif dan tidak menyukai struktur atau rutinitas yang kaku. Anda lebih suka bekerja dengan ide-ide kreatif, desain, seni, musik, atau tulisan.", traits: ["Kreatif, ekspresif, dan memiliki imajinasi tinggi", "Peka terhadap estetika dan keindahan visual/suara", "Menyukai kebebasan, kemandirian, dan fleksibilitas", "Cenderung berpikir out-of-the-box (unik)"], careers: ["Desainer Grafis / UI-UX", "Seniman / Ilustrator / Desainer Baju", "Penulis / Copywriter / Jurnalis", "Musisi / Komposer", "Sutradara / Broadcasting", "Aktor / Penari / Animator"] },
+            S: { name: "Social (Sosial & Membantu)", desc: "Anda sangat empatik, ramah, dan komunikatif. Anda mendapatkan kepuasan murni dari membantu, mengajar, merawat, atau memberikan pelayanan kepada orang lain. Anda sangat mengutamakan kesejahteraan sosial dan lingkungan.", traits: ["Empatik, peduli, ramah dan penyabar", "Komunikator yang baik dan pendengar yang aktif", "Menyukai kerja tim dan kolaborasi kelompok", "Fokus pada pengembangan & penyembuhan manusia"], careers: ["Guru / Pendidik / Dosen", "Konselor / Guru BK", "Perawat / Dokter / Terapis", "Pekerja Sosial", "Customer Service / Humas", "Human Resources (HRD)"] },
+            E: { name: "Enterprising (Persuasif & Bisnis)", desc: "Anda sangat ambisius, energik, dan memiliki kepercayaan diri tinggi. Anda memiliki jiwa kepemimpinan yang kuat dan suka memengaruhi, meyakinkan, atau memimpin orang lain untuk mencapai target organisasi atau keuntungan finansial.", traits: ["Ambisius, percaya diri, dan persuasif", "Memiliki jiwa kepemimpinan dan negosiasi alami", "Berorientasi pada target, visi, dan pencapaian", "Menyukai tantangan, bisnis, dan persaingan"], careers: ["Pengusaha / Entrepreneur", "Manajer / Eksekutif Perusahaan", "Sales / Marketing / Digital Marketer", "Pengacara / Advokat", "Politisi / Pejabat Publik", "Event Organizer"] },
+            C: { name: "Conventional (Organisasi & Data)", desc: "Anda sangat terstruktur, teliti, dan berorientasi pada detail. Anda menyukai rutinitas yang jelas, kepastian, dan aturan yang terorganisir dengan baik. Anda sangat unggul dalam manajemen administrasi, arsip, dan komputasi.", traits: ["Sangat teliti, rapi, dan terorganisir", "Taat pada aturan, prosedur, dan jadwal", "Memiliki keahlian klerikal dan numerik yang kuat", "Sangat handal dan sistematis dalam mengelola data"], careers: ["Akuntan / Auditor / Pajak", "Administrasi Perkantoran", "Analis Data / Aktuaris", "Pegawai Bank / Teller", "Pustakawan / Arsiparis", "Staf Legal / Kepatuhan"] }
+        };
+
+        const riasecQuestions = {
+            R: { title: "Realistic (Praktis & Fisik)", badge: "bg-rose-100 text-rose-700", icon: "R", items: ["Saya suka memperbaiki mainan, motor, mobil, dsj.", "Saya suka membangun sesuatu (misal: bikin tembok, rak kayu, meja, dll)", "Saya suka memelihara binatang", "Saya suka merakit sesuatu (mainan, kertas lipat, instalasi listrik, DIY)", "Saya suka memasak atau membuat kue", "Saya orang yang praktis (tidak berbelit-belit/simpel)", "Saya suka bekerja di luar ruangan (di lapangan, mall, pinggir jalan, dll)"] },
+            I: { title: "Investigative (Analitis & Sains)", badge: "bg-amber-100 text-amber-700", icon: "I", items: ["Saya suka main atau membuat teka-teki (TTS, sudoku, catur, dll)", "Saya suka bereksperimen (nyobain teh campur kopi, masak yang aneh-aneh, dll)", "Saya senang mencari tahu cara kerja sesuatu", "Saya suka sains (IPA, Fisika, Kimia, dsj)", "Saya suka menganalisis sesuatu", "Saya suka bekerja dengan angka", "Saya suka matematika"] },
+            A: { title: "Artistic (Kreatif & Seni)", badge: "bg-purple-100 text-purple-700", icon: "A", items: ["Saya suka ketika bekerja sendiri", "Saya suka membaca tentang seni dan musik", "Saya suka melakukan sesuatu dengan instruksi", "Saya suka menulis kreatif", "Saya suka memainkan alat musik", "Saya suka bermain peran", "Saya suka menggambar/melukis"] },
+            S: { title: "Social (Sosial & Membantu)", badge: "bg-emerald-100 text-emerald-700", icon: "S", items: ["Saya suka bekerja dalam tim", "Saya suka mengajar", "Saya suka membantu memecahkan masalah", "Saya tertarik untuk menyembuhkan orang lain", "Saya suka belajar budaya lain", "Saya suka berdiskusi", "Saya suka membantu orang lain"] },
+            E: { title: "Enterprising (Bisnis & Kepemimpinan)", badge: "bg-orange-100 text-orange-700", icon: "E", items: ["Saya selalu ambisius dan menetapkan tujuan untuk diri sendiri", "Saya suka untuk memengaruhi orang lain", "Saya suka menjual barang atau jasa", "Saya bertanggung jawab", "Saya ingin memulai bisnis sendiri", "Saya suka memimpin", "Saya suka berpidato di depan banyak orang"] },
+            C: { title: "Conventional (Organisasi & Data)", badge: "bg-blue-100 text-blue-700", icon: "C", items: ["Saya suka mengatur berbagai hal", "Saya suka melakukan sesuatu dengan instruksi", "Saya tidak masalah bekerja 8 jam sehari", "Saya selalu memperhatikan detail", "Saya suka melakukan pengarsipan atau pendataan", "Saya pandai menyimpan catatan pekerjaan", "Saya suka bekerja di kantor"] }
+        };
+
+        function initQuestions() {
+            allQuestions = [];
+            for (const cat in riasecQuestions) {
+                riasecQuestions[cat].items.forEach((qText) => {
+                    allQuestions.push({ category: cat, categoryTitle: riasecQuestions[cat].title, badge: riasecQuestions[cat].badge, icon: riasecQuestions[cat].icon, text: qText });
+                });
+            }
+        }
+
+        window.resetTest = function() {
+            clearInterval(timerInterval);
+            for (const cat in scores) scores[cat] = 0;
+            currentQuestionIndex = 0;
+            timeLeft = 5;
+            document.getElementById('userName').value = '';
+            document.getElementById('userClass').value = '';
+            document.getElementById('resultContent').classList.add('hidden');
+            document.getElementById('detailAnalysisBox').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('saveStatus').className = "mb-6 p-4 rounded-xl text-center text-sm font-medium border";
+            document.getElementById('saveStatus').innerText = "Menyimpan hasil ke database...";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.startTest = function() {
+            const userName = document.getElementById('userName').value.trim();
+            const userClass = document.getElementById('userClass').value.trim();
+            if (!userName || !userClass) {
+                document.getElementById('personalDataError').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('personalDataError').classList.add('hidden');
+            document.getElementById('displayName').innerText = userName;
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            initQuestions();
+            showQuestion(0);
+        };
+
+        function showQuestion(index) {
+            clearInterval(timerInterval);
+            if (index >= allQuestions.length) {
+                calculateAndSave();
+                return;
+            }
+            currentQuestionIndex = index;
+            const q = allQuestions[index];
+            timeLeft = 5; 
+            document.getElementById('qProgress').innerText = `Pertanyaan ${index + 1} dari ${allQuestions.length}`;
+            document.getElementById('qCategoryBadge').className = `${q.badge} w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold`;
+            document.getElementById('qCategoryBadge').innerText = q.icon;
+            document.getElementById('qCategoryTitle').innerText = q.categoryTitle;
+            document.getElementById('qText').innerText = q.text;
+            
+            const timerBar = document.getElementById('timerBar');
+            document.getElementById('timerText').innerText = timeLeft;
+            timerBar.style.transition = 'none';
+            timerBar.style.width = '100%';
+            void timerBar.offsetWidth; 
+            timerBar.style.transition = 'width 1s linear';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerText').innerText = timeLeft;
+                timerBar.style.width = `${(timeLeft / 5) * 100}%`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleAnswer(0); 
+                }
+            }, 1000);
+        }
+
+        window.handleAnswer = function(value) {
+            clearInterval(timerInterval);
+            scores[allQuestions[currentQuestionIndex].category] += value;
+            showQuestion(currentQuestionIndex + 1);
+        };
+
+        async function calculateAndSave() {
+            const userName = document.getElementById('userName').value.trim();
+            const userClass = document.getElementById('userClass').value.trim();
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('resultContent').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            document.getElementById('resultIdentity').innerText = `${userName} (Kelas: ${userClass})`;
+
+            let highestCategory = '';
+            let maxScore = -1;
+            for (const category in scores) {
+                if (scores[category] > maxScore) { maxScore = scores[category]; highestCategory = category; }
+            }
+
+            const tbody = document.getElementById('scoreTableBody');
+            tbody.innerHTML = '';
+            let hollandCode = '-';
+            let tipeDominanName = 'Belum Teridentifikasi';
+
+            if (maxScore > 0) {
+                tipeDominanName = categoryData[highestCategory].name;
+                document.getElementById('highestScoreText').innerHTML = `Tipe dominan Anda adalah: <strong class="text-indigo-700">${tipeDominanName}</strong>`;
+                document.getElementById('highestDescText').innerText = categoryData[highestCategory].desc;
+                
+                // Tampilkan Kotak Detail & Karir
+                document.getElementById('detailAnalysisBox').classList.remove('hidden');
+                
+                const traitUl = document.getElementById('traitList');
+                traitUl.innerHTML = '';
+                categoryData[highestCategory].traits.forEach(trait => { traitUl.innerHTML += `<li>${trait}</li>`; });
+                
+                const careerUl = document.getElementById('careerList');
+                careerUl.innerHTML = '';
+                categoryData[highestCategory].careers.forEach(career => { careerUl.innerHTML += `<li>${career}</li>`; });
+
+                const sortedCategories = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+
+                sortedCategories.forEach(cat => {
+                    tbody.innerHTML += `<tr class="${cat === highestCategory ? 'bg-indigo-50' : ''}">
+                        <td class="px-5 py-3 font-semibold ${cat === highestCategory ? 'text-indigo-900' : ''}">${categoryData[cat].name}</td>
+                        <td class="px-5 py-3 text-center"><span class="inline-block bg-slate-100 px-2.5 py-1 rounded-lg text-xs font-bold">${scores[cat]} / 7</span></td>
+                    </tr>`;
+                });
+
+                const top1 = sortedCategories[0], top2 = sortedCategories[1], top3 = sortedCategories[2];
+                hollandCode = `${top1}${top2}${scores[top3] > 0 ? top3 : ''}`;
+                document.getElementById('conclusionText').innerHTML = `
+                    Berdasarkan respon spontan, kecenderungan karir paling dominan Anda mengarah ke bidang <strong>${categoryData[top1].name}</strong>, yang didukung kuat oleh <strong>${categoryData[top2].name}</strong> sebagai minat sekunder.<br><br>
+                    Kode Holland Kepribadian Anda adalah <strong class="text-indigo-700 text-lg tracking-widest">${hollandCode}</strong>.<br><br>
+                    Anda sangat didorong untuk mengeksplorasi potensi ini, membandingkannya dengan kesesuaian jurusan saat ini, dan mendiskusikannya lebih lanjut bersama <strong>Guru BK SMK AL-WAFA</strong> untuk merencanakan peta karir masa depan yang matang.
+                `;
+            } else {
+                document.getElementById('highestScoreText').innerHTML = `Belum Ada Pilihan`;
+                document.getElementById('highestDescText').innerText = `Hasil dicatat sebagai uji coba (skor 0).`;
+                document.getElementById('conclusionText').innerText = `Silakan ulangi tes secara saksama.`;
+            }
+
+            await saveToFirebase({ namaLengkap: userName, kelas: userClass, skorMentah: scores, tipeDominan: tipeDominanName, kodeHolland: hollandCode });
+        }
+
+        async function saveToFirebase(resultData) {
+            const statusEl = document.getElementById('saveStatus');
+            statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-blue-50 text-blue-700";
+            statusEl.innerText = "Menghubungkan ke database...";
+            try {
+                const user = await getAuthUser();
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'riasec-smkalwafa';
+                const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'hasil_tes');
+                await addDoc(resultsRef, { ...resultData, waktuTes: serverTimestamp(), userId: user.uid });
+                statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-emerald-50 text-emerald-700";
+                statusEl.innerHTML = `✅ <strong>Berhasil Disimpan!</strong> Hasil tes terekam di sistem Guru BK.`;
+            } catch (err) {
+                console.error("Firebase Save Error:", err);
+                statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-rose-50 text-rose-700";
+                statusEl.innerHTML = `⚠️ <strong>Gagal menyimpan!</strong><br><span class="text-xs text-rose-500">Detail: ${err.message}</span>`;
+            }
+        }
+
+        // FUNGSI NATIVE BROWSER PRINT (Buka Tab Baru & Print PDF Anti Terpotong)
+        window.exportStudentPDF = function(data) {
+            const dateString = (data.waktuTes && typeof data.waktuTes.toDate === 'function') 
+                ? new Date(data.waktuTes.toDate()).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' })
+                : new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+
+            const categoriesSorted = Object.keys(data.skorMentah || {}).sort((a,b) => data.skorMentah[b] - data.skorMentah[a]);
+            
+            let dominanDesc = "Hasil dicatat sebagai uji coba (skor 0). Silakan melakukan tes ulang dengan saksama.";
+            let traitsHtml = "";
+            let careersHtml = "";
+
+            if (data.tipeDominan !== 'Belum Teridentifikasi' && categoriesSorted.length > 0) {
+                const topKey = categoriesSorted[0];
+                if (data.skorMentah[topKey] > 0) {
+                    dominanDesc = categoryData[topKey].desc;
+                    
+                    traitsHtml = `<ul style="margin: 5px 0 0 15px; padding: 0;">`;
+                    categoryData[topKey].traits.forEach(t => traitsHtml += `<li style="margin-bottom: 5px;">${t}</li>`);
+                    traitsHtml += `</ul>`;
+                    
+                    careersHtml = `<ul style="margin: 5px 0 0 15px; padding: 0;">`;
+                    categoryData[topKey].careers.forEach(c => careersHtml += `<li style="margin-bottom: 5px;">${c}</li>`);
+                    careersHtml += `</ul>`;
+                }
+            }
+
+            let tableRowsHtml = '';
+            categoriesSorted.forEach(cat => {
+                const percentage = Math.round((data.skorMentah[cat] / 7) * 100);
+                tableRowsHtml += `
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: bold; font-size: 13px; color: #334155;">${categoryData[cat].name}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: center; font-weight: bold; font-size: 13px; color: #334155;">${data.skorMentah[cat]} / 7</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">
+                            <div style="background-color: #f1f5f9; width: 100%; height: 12px; border-radius: 6px; overflow: hidden;">
+                                <div style="background-color: #4f46e5; height: 12px; width: ${percentage}%;"></div>
+                            </div>
+                        </td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; font-size: 13px; color: #334155;">${percentage}%</td>
+                    </tr>
+                `;
+            });
+
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="id">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Laporan_RIASEC_${data.namaLengkap.replace(/\s+/g, '_')}</title>
+                    <style>
+                        body { font-family: 'Arial', sans-serif; color: #0f172a; line-height: 1.5; padding: 30px; max-width: 800px; margin: 0 auto; }
+                        .kop { text-align: center; border-bottom: 4px double #1e1b4b; padding-bottom: 15px; margin-bottom: 25px; }
+                        .kop h2 { margin: 0; font-size: 18px; color: #1e1b4b; text-transform: uppercase; letter-spacing: 1px; }
+                        .kop h1 { margin: 5px 0 0 0; font-size: 28px; font-weight: 900; color: #4f46e5; text-transform: uppercase; letter-spacing: 2px; }
+                        .kop p { margin: 5px 0 0 0; font-size: 12px; color: #475569; font-style: italic; }
+                        .title { text-align: center; margin-bottom: 30px; }
+                        .title h3 { margin: 0; font-size: 18px; font-weight: bold; text-transform: uppercase; text-decoration: underline; color: #0f172a; }
+                        .identitas { width: 100%; margin-bottom: 35px; font-size: 14px; border-collapse: collapse; }
+                        .identitas td { padding: 6px 0; }
+                        .identitas td.label { font-weight: bold; color: #475569; width: 20%; }
+                        .identitas td.colon { width: 2%; text-align: center; }
+                        .identitas td.value { font-weight: bold; width: 38%; color: #0f172a; }
+                        h4.section-title { margin: 0 0 15px 0; font-size: 15px; font-weight: bold; color: #1e293b; text-transform: uppercase; padding-bottom: 5px; border-bottom: 2px solid #e2e8f0; }
+                        .skor-table { width: 100%; border-collapse: collapse; margin-bottom: 50px; text-align: left; }
+                        .skor-table th { padding: 12px; font-size: 13px; color: #475569; background-color: #f8fafc; border-bottom: 2px solid #cbd5e1; text-transform: uppercase; }
+                        .ttd { width: 100%; text-align: center; font-size: 14px; margin-top: 50px; border-collapse: collapse; }
+                        .ttd td { width: 50%; vertical-align: bottom; }
+                        .ttd p { margin: 0 0 80px 0; color: #475569; }
+                        .ttd .nama { font-weight: bold; color: #0f172a; text-decoration: underline; text-transform: uppercase; margin: 0; }
+                        .desc-box { background-color: #eef2ff; border-left: 5px solid #4f46e5; padding: 15px; margin-bottom: 25px; border-radius: 0 8px 8px 0; }
+                        .desc-box p { margin: 0; font-size: 14px; color: #334155; line-height: 1.6; }
+                        .grid-2 { display: table; width: 100%; margin-bottom: 35px; table-layout: fixed; }
+                        .grid-col { display: table-cell; width: 50%; padding: 15px; border-radius: 6px; }
+                        .grid-col h5 { margin: 0 0 10px 0; color: #0f172a; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; }
+                        
+                        @media print {
+                            body { padding: 0; }
+                            @page { margin: 15mm; size: A4 portrait; }
+                            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="kop">
+                        <h2>Layanan Bimbingan dan Konseling (BK)</h2>
+                        <h1>SMK AL-WAFA</h1>
+                        <p>Jl. Raya Ciwidey No.12, Kabupaten Bandung, Jawa Barat - Indonesia</p>
+                    </div>
+                    
+                    <div class="title">
+                        <h3>Laporan Hasil Tes Minat Karir RIASEC</h3>
+                    </div>
+                    
+                    <table class="identitas">
+                        <tr>
+                            <td class="label">Nama Siswa</td><td class="colon">:</td><td class="value">${data.namaLengkap}</td>
+                            <td class="label">Tipe Dominan</td><td class="colon">:</td><td class="value" style="color: #4f46e5;">${data.tipeDominan}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Kelas</td><td class="colon">:</td><td class="value">${data.kelas}</td>
+                            <td class="label">Kode Holland</td><td class="colon">:</td><td class="value" style="font-family: monospace; font-size: 16px; color: #0d9488;">${data.kodeHolland}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Waktu Pelaksanaan</td><td class="colon">:</td><td class="value" colspan="4">${dateString}</td>
+                        </tr>
+                    </table>
+
+                    <h4 class="section-title">Karakteristik & Deskripsi Profil</h4>
+                    <div class="desc-box">
+                        <p><strong>${data.tipeDominan}</strong> — ${dominanDesc}</p>
+                    </div>
+
+                    ${traitsHtml ? `
+                    <div class="grid-2">
+                        <div class="grid-col" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-right: 3px solid white;">
+                            <h5>💡 Karakteristik Utama</h5>
+                            <div style="font-size: 13px; color: #334155;">${traitsHtml}</div>
+                        </div>
+                        <div class="grid-col" style="background-color: #f0fdf4; border: 1px solid #dcfce3;">
+                            <h5>🎯 Rekomendasi Profesi / Bidang</h5>
+                            <div style="font-size: 13px; color: #334155;">${careersHtml}</div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <h4 class="section-title">Distribusi Skor (RIASEC)</h4>
+                    <table class="skor-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 35%;">Kategori</th>
+                                <th style="width: 15%; text-align: center;">Skor</th>
+                                <th style="width: 40%;">Grafik Kerapatan</th>
+                                <th style="width: 10%; text-align: right;">%</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRowsHtml}</tbody>
+                    </table>
+
+                    <table class="ttd">
+                        <tr>
+                            <td>
+                                <p>Mengetahui,<br>Guru BK SMK AL-WAFA</p>
+                                <div class="nama">Guru BK SMK AL-WAFA</div>
+                            </td>
+                            <td>
+                                <p>Bandung, ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}<br>Siswa Bersangkutan</p>
+                                <div class="nama">${data.namaLengkap}</div>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            const printWindow = window.open('', '_blank');
+            if (printWindow) {
+                printWindow.document.open();
+                printWindow.document.write(htmlContent);
+                printWindow.document.close();
+                setTimeout(() => {
+                    printWindow.focus();
+                    printWindow.print();
+                }, 500);
+            } else {
+                alert("Browser memblokir tab baru (pop-up). Mohon izinkan pop-up untuk melihat PDF.");
+            }
+        };
+
+        window.downloadCurrentStudentPDF = function() {
+            const userName = document.getElementById('userName').value.trim();
+            const userClass = document.getElementById('userClass').value.trim();
+            let highestCategory = '';
+            let maxScore = -1;
+            for (const category in scores) {
+                if (scores[category] > maxScore) { maxScore = scores[category]; highestCategory = category; }
+            }
+            const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
+            exportStudentPDF({
+                namaLengkap: userName, kelas: userClass, skorMentah: scores,
+                tipeDominan: maxScore > 0 ? categoryData[highestCategory].name : 'Belum Teridentifikasi',
+                kodeHolland: `${sorted[0]}${sorted[1]}${scores[sorted[2]] > 0 ? sorted[2] : ''}`, waktuTes: null
+            });
+        };
+
+        window.downloadStudentPDFById = function(docId) {
+            const student = allAdminData.find(d => d.id === docId);
+            if (student) exportStudentPDF(student);
+        };
+
+        window.showAdminLogin = () => { document.getElementById('step1').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); };
+        window.returnToStudent = () => { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('step1').classList.remove('hidden'); };
+        
+        window.logoutAdmin = () => {
+            allAdminData = [];
+            document.getElementById('tableBody').innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">Membuka data hasil dari Firebase...</td></tr>`;
+            document.getElementById('totalSiswa').innerText = '0';
+            document.getElementById('adminPass').value = '';
+            document.getElementById('searchInput').value = '';
+            
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.checkAdminAuth = () => {
+            if (document.getElementById('adminPass').value === "smkalwafa123") {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboardScreen').classList.remove('hidden');
+                listenToStudentData();
+            } else {
+                document.getElementById('adminErrorMsg').classList.remove('hidden');
+            }
+        };
+
+        async function listenToStudentData() {
+            const syncLabel = document.getElementById('syncStatusLabel');
+            const tbody = document.getElementById('tableBody');
+            syncLabel.innerText = "Mengamankan Sesi...";
+            try {
+                const user = await getAuthUser();
+                syncLabel.innerText = "Sinkronisasi Aktif";
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'riasec-smkalwafa';
+                const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'hasil_tes');
+
+                onSnapshot(resultsRef, (snapshot) => {
+                    allAdminData = [];
+                    snapshot.forEach((doc) => allAdminData.push({ id: doc.id, ...doc.data() }));
+                    allAdminData.sort((a, b) => (b.waktuTes?.seconds || 0) - (a.waktuTes?.seconds || 0));
+                    renderAdminTable(allAdminData);
+                    document.getElementById('totalSiswa').innerText = allAdminData.length;
+                }, (error) => {
+                    console.error("Firebase Read Error:", error);
+                    syncLabel.innerText = "Koneksi Ditolak Firebase";
+                    syncLabel.className = "text-rose-600 font-semibold text-sm";
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-rose-600 font-semibold p-6 bg-rose-50">⚠️ Akses Ditolak Firebase!<br><span class="font-normal text-sm text-rose-500">Penyebab: ${error.message}</span><br><br>Mohon pastikan Aturan (Rules) Firestore sudah diset dan di-Publish.</td></tr>`;
+                });
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-rose-500 font-semibold p-6">⚠️ Gagal koneksi (Autentikasi): ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderAdminTable(dataList) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            if (dataList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 italic">Belum ada siswa yang merampungkan tes.</td></tr>`;
+                return;
+            }
+            dataList.forEach((data) => {
+                const dateText = (data.waktuTes && typeof data.waktuTes.toDate === 'function') ? new Date(data.waktuTes.toDate()).toLocaleString('id-ID') : '-';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
+                        <td class="px-6 py-4 font-semibold text-slate-900">${data.namaLengkap}</td>
+                        <td class="px-6 py-4 text-slate-600">${data.kelas}</td>
+                        <td class="px-6 py-4"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg text-xs font-bold border border-indigo-100">${data.tipeDominan}</span></td>
+                        <td class="px-6 py-4 font-mono font-bold text-slate-700">${data.kodeHolland}</td>
+                        <td class="px-6 py-4 text-xs text-slate-500">${dateText}</td>
+                        <td class="px-6 py-4 text-center">
+                            <button onclick="downloadStudentPDFById('${data.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-sm transition-all">PDF</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        window.filterTable = () => {
+            const filter = document.getElementById('searchInput').value.toUpperCase();
+            const rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) rows[i].style.display = (rows[i].textContent || rows[i].innerText).toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        };
+
+        window.exportToCSV = () => {
+            if (allAdminData.length === 0) return;
+            let csv = "Nama Lengkap,Kelas / Jurusan,Tipe Dominan,Kode Holland,Waktu Selesai\n";
+            allAdminData.forEach(d => {
+                const dateText = (d.waktuTes && typeof d.waktuTes.toDate === 'function') ? new Date(d.waktuTes.toDate()).toLocaleString('id-ID') : '-';
+                csv += `${d.namaLengkap?.replace(/,/g, ' ')},${d.kelas?.replace(/,/g, ' ')},${d.tipeDominan},${d.kodeHolland},${dateText}\n`;
+            });
+            const url = window.URL.createObjectURL(new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: 'text/csv;charset=utf-8;' }));
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'Hasil_Tes_RIASEC_SMK_AL-WAFA.csv');
+            a.click();
+        };
+    </script>
+</body>
+</html>
