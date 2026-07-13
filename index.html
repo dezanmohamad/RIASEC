@@ -89,7 +89,7 @@
             <div class="inline-flex bg-indigo-100 text-indigo-600 w-20 h-20 rounded-full items-center justify-center text-4xl mb-6 mx-auto animate-bounce shadow-inner">
                 💬
             </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-3">Halo, <span id="displayName" class="text-indigo-600">Siswa</span>!</h2>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-3">Halo, <span id="displayName" class="text-indigo-600 capitalize">Siswa</span>!</h2>
             <p class="text-slate-600 mb-8 text-base sm:text-lg leading-relaxed">
                 Jawablah menggunakan insting pertama Anda. Jangan terlalu lama berpikir.<br><br>
                 Anda hanya memiliki waktu <strong class="text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-100">5 Detik</strong> untuk setiap pertanyaan. Bersiaplah!
@@ -134,7 +134,7 @@
         <div id="resultContent" class="hidden fade-in mt-4 bg-white p-6 sm:p-8 rounded-2xl shadow-md border border-slate-200">
             <div class="text-center mb-6 border-b border-slate-100 pb-4">
                 <p class="text-slate-500 text-sm">Hasil Tes Psikometri untuk:</p>
-                <p id="resultIdentity" class="text-xl font-bold text-slate-800 mt-1"></p>
+                <p id="resultIdentity" class="text-xl font-bold text-slate-800 mt-1 capitalize"></p>
             </div>
 
             <div id="saveStatus" class="mb-6 p-4 rounded-xl text-center text-sm font-medium border">
@@ -146,7 +146,6 @@
                 <p id="highestDescText" class="text-slate-700 text-sm sm:text-base leading-relaxed"></p>
             </div>
 
-            <!-- Tambahan Detail Karakter & Karir -->
             <div id="detailAnalysisBox" class="hidden mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-blue-50 border border-blue-100 p-5 rounded-xl">
                     <h4 class="font-bold text-blue-900 mb-3 flex items-center gap-2">
@@ -296,15 +295,18 @@
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // HARAP PASTIKAN KONFIGURASI INI ADALAH MILIK FIREBASE ANDA SENDIRI
+        // =========================================================================
+        // 🔴 KONFIGURASI FIREBASE BARU (RIASEC2) 🔴
+        // =========================================================================
         let firebaseConfig = {
-            apiKey: "AIzaSyB5pKEknOV9dIDwWiDg891MRUmrahwkdW8",
-            authDomain: "riasec-975d6.firebaseapp.com",
-            projectId: "riasec-975d6",
-            storageBucket: "riasec-975d6.firebasestorage.app",
-            messagingSenderId: "827760323443",
-            appId: "1:827760323443:web:7c5845ac6903832107f306"
+            apiKey: "AIzaSyB4Ow3xlut9EhQHoy5080rye33yJjANPK0",
+            authDomain: "riasec2.firebaseapp.com",
+            projectId: "riasec2",
+            storageBucket: "riasec2.firebasestorage.app",
+            messagingSenderId: "126833468851",
+            appId: "1:126833468851:web:d159a1575e1218f56217c6"
         };
+        // =========================================================================
 
         if (typeof __firebase_config !== 'undefined') {
             try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) { console.error("Failed to parse config:", e); }
@@ -376,7 +378,7 @@
             document.getElementById('resultContent').classList.add('hidden');
             document.getElementById('detailAnalysisBox').classList.add('hidden');
             document.getElementById('step2').classList.add('hidden');
-            document.getElementById('stepPrep').classList.add('hidden'); // Sembunyikan layar persiapan
+            document.getElementById('stepPrep').classList.add('hidden'); 
             document.getElementById('step1').classList.remove('hidden');
             document.getElementById('saveStatus').className = "mb-6 p-4 rounded-xl text-center text-sm font-medium border";
             document.getElementById('saveStatus').innerText = "Menyimpan hasil ke database...";
@@ -393,13 +395,11 @@
             document.getElementById('personalDataError').classList.add('hidden');
             document.getElementById('displayName').innerText = userName;
             
-            // Pindah ke Layar Persiapan Dulu, JANGAN langsung mulai timer
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('stepPrep').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        // Fungsi Baru: Tombol "Saya Siap" ditekan
         window.beginQuiz = function() {
             document.getElementById('stepPrep').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
@@ -473,7 +473,6 @@
                 document.getElementById('highestScoreText').innerHTML = `Tipe dominan Anda adalah: <strong class="text-indigo-700">${tipeDominanName}</strong>`;
                 document.getElementById('highestDescText').innerText = categoryData[highestCategory].desc;
                 
-                // Tampilkan Kotak Detail & Karir
                 document.getElementById('detailAnalysisBox').classList.remove('hidden');
                 
                 const traitUl = document.getElementById('traitList');
@@ -512,41 +511,42 @@
         async function saveToFirebase(resultData) {
             const statusEl = document.getElementById('saveStatus');
             statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-blue-50 text-blue-700";
-            statusEl.innerText = "Menghubungkan ke database Firebase...";
+            statusEl.innerText = "Menghubungkan ke server...";
             
             try {
-                // 1. Memastikan Auth selesai dengan timeout (Mencegah Hanging)
+                // Pastikan Auth
                 const authPromise = getAuthUser();
-                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout: Firebase Auth tidak merespons (Cek koneksi internet atau Domain Netlify di Authorized Domains)")), 7000));
+                const timeoutAuth = new Promise((_, reject) => setTimeout(() => reject(new Error("Gagal mengenali user. Cek Auth Firebase.")), 7000));
+                const user = await Promise.race([authPromise, timeoutAuth]);
                 
-                const user = await Promise.race([authPromise, timeoutPromise]);
-                statusEl.innerText = "Sesi aman. Menyimpan data...";
-
-                // 2. Tentukan ID Aplikasi secara Dinamis (Mencegah Error Permissions di Canvas vs Netlify)
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'riasec-smkalwafa';
+                statusEl.innerText = "Mengirim data...";
+                const appId = 'riasec-smkalwafa'; 
                 
-                // 3. Proses Menyimpan ke Firestore
+                // Pastikan AddDoc (Proses Tembak Database Server) memiliki Batas Waktu 10 Detik
                 const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'hasil_tes');
-                await addDoc(resultsRef, { 
+                const savePromise = addDoc(resultsRef, { 
                     ...resultData, 
                     waktuTes: serverTimestamp(), 
                     userId: user.uid 
                 });
+                const timeoutSave = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout: Jaringan terputus atau Dilarang oleh aturan Firestore (Cek Rules dan Authorized Domains).")), 10000));
                 
-                // 4. Sukses
+                // Balapan: Siapa cepat dia dapat (Tembus db vs Timeout)
+                await Promise.race([savePromise, timeoutSave]);
+                
+                // Sukses
                 statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-emerald-50 text-emerald-700";
                 statusEl.innerHTML = `✅ <strong>Berhasil Disimpan!</strong> Hasil tes terekam di sistem Guru BK.`;
-                console.log("Firebase Save Success!");
                 
             } catch (err) {
-                // 5. Tangkap Error Brutal (Sekarang tidak akan hang lagi!)
+                // GAGAL
                 console.error("Firebase Save Error TERDETEKSI:", err);
                 statusEl.className = "mb-6 p-4 rounded-xl text-center text-sm font-semibold bg-rose-50 text-rose-700";
-                statusEl.innerHTML = `⚠️ <strong>Gagal menyimpan!</strong><br><span class="text-xs text-rose-500">Detail: ${err.message}</span>`;
+                statusEl.innerHTML = `⚠️ <strong>Gagal menyimpan!</strong><br><span class="text-xs text-rose-500">Detail Error: ${err.message}</span>`;
             }
         }
 
-        // FUNGSI NATIVE BROWSER PRINT (Buka Tab Baru & Print PDF Anti Terpotong)
+        // FUNGSI PRINT PDF
         window.exportStudentPDF = function(data) {
             const dateString = (data.waktuTes && typeof data.waktuTes.toDate === 'function') 
                 ? new Date(data.waktuTes.toDate()).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' })
@@ -608,7 +608,7 @@
                         .identitas td { padding: 6px 0; }
                         .identitas td.label { font-weight: bold; color: #475569; width: 20%; }
                         .identitas td.colon { width: 2%; text-align: center; }
-                        .identitas td.value { font-weight: bold; width: 38%; color: #0f172a; }
+                        .identitas td.value { font-weight: bold; width: 38%; color: #0f172a; text-transform: capitalize; }
                         h4.section-title { margin: 0 0 15px 0; font-size: 15px; font-weight: bold; color: #1e293b; text-transform: uppercase; padding-bottom: 5px; border-bottom: 2px solid #e2e8f0; }
                         .skor-table { width: 100%; border-collapse: collapse; margin-bottom: 50px; text-align: left; }
                         .skor-table th { padding: 12px; font-size: 13px; color: #475569; background-color: #f8fafc; border-bottom: 2px solid #cbd5e1; text-transform: uppercase; }
@@ -616,6 +616,7 @@
                         .ttd td { width: 50%; vertical-align: bottom; }
                         .ttd p { margin: 0 0 80px 0; color: #475569; }
                         .ttd .nama { font-weight: bold; color: #0f172a; text-decoration: underline; margin: 0; }
+                        .ttd .nama-siswa { font-weight: bold; color: #0f172a; text-decoration: underline; text-transform: capitalize; margin: 0; }
                         .desc-box { background-color: #eef2ff; border-left: 5px solid #4f46e5; padding: 15px; margin-bottom: 25px; border-radius: 0 8px 8px 0; }
                         .desc-box p { margin: 0; font-size: 14px; color: #334155; line-height: 1.6; }
                         .grid-2 { display: table; width: 100%; margin-bottom: 35px; table-layout: fixed; }
@@ -643,14 +644,14 @@
                     <table class="identitas">
                         <tr>
                             <td class="label">Nama Siswa</td><td class="colon">:</td><td class="value">${data.namaLengkap}</td>
-                            <td class="label">Tipe Dominan</td><td class="colon">:</td><td class="value" style="color: #4f46e5;">${data.tipeDominan}</td>
+                            <td class="label">Tipe Dominan</td><td class="colon">:</td><td class="value" style="color: #4f46e5; text-transform: none;">${data.tipeDominan}</td>
                         </tr>
                         <tr>
-                            <td class="label">Kelas</td><td class="colon">:</td><td class="value">${data.kelas}</td>
-                            <td class="label">Kode Holland</td><td class="colon">:</td><td class="value" style="font-family: monospace; font-size: 16px; color: #0d9488;">${data.kodeHolland}</td>
+                            <td class="label">Kelas</td><td class="colon">:</td><td class="value" style="text-transform: none;">${data.kelas}</td>
+                            <td class="label">Kode Holland</td><td class="colon">:</td><td class="value" style="font-family: monospace; font-size: 16px; color: #0d9488; text-transform: none;">${data.kodeHolland}</td>
                         </tr>
                         <tr>
-                            <td class="label">Waktu Pelaksanaan</td><td class="colon">:</td><td class="value" colspan="4">${dateString}</td>
+                            <td class="label">Waktu Pelaksanaan</td><td class="colon">:</td><td class="value" colspan="4" style="text-transform: none;">${dateString}</td>
                         </tr>
                     </table>
 
@@ -693,7 +694,7 @@
                             </td>
                             <td>
                                 <p>Bandung, ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}<br>Siswa Bersangkutan</p>
-                                <div class="nama" style="text-transform: capitalize;">${data.namaLengkap}</div>
+                                <div class="nama-siswa">${data.namaLengkap}</div>
                             </td>
                         </tr>
                     </table>
@@ -766,16 +767,12 @@
             const tbody = document.getElementById('tableBody');
             syncLabel.innerText = "Mengamankan Sesi...";
             try {
-                // Tambahkan timeout yang sama untuk Dashboard Guru
                 const authPromise = getAuthUser();
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout: Gagal memverifikasi admin.")), 7000));
                 const user = await Promise.race([authPromise, timeoutPromise]);
                 
                 syncLabel.innerText = "Sinkronisasi Aktif";
-                
-                // Tentukan ID Aplikasi secara Dinamis (Mencegah Error Permissions di Canvas vs Netlify)
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'riasec-smkalwafa';
-                
+                const appId = 'riasec-smkalwafa'; 
                 const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'hasil_tes');
 
                 onSnapshot(resultsRef, (snapshot) => {
@@ -806,7 +803,7 @@
                 const dateText = (data.waktuTes && typeof data.waktuTes.toDate === 'function') ? new Date(data.waktuTes.toDate()).toLocaleString('id-ID') : '-';
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
-                        <td class="px-6 py-4 font-semibold text-slate-900">${data.namaLengkap}</td>
+                        <td class="px-6 py-4 font-semibold text-slate-900 capitalize">${data.namaLengkap}</td>
                         <td class="px-6 py-4 text-slate-600">${data.kelas}</td>
                         <td class="px-6 py-4"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg text-xs font-bold border border-indigo-100">${data.tipeDominan}</span></td>
                         <td class="px-6 py-4 font-mono font-bold text-slate-700">${data.kodeHolland}</td>
